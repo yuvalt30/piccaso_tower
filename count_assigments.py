@@ -161,32 +161,34 @@ def helper_neighbor_hint(
     assigment: Assigment
 ) -> int:
     """
-    Handles NeighborHints by trying all valid floor pairs that are adjacent.
+    Handles a NeighborHint by converting it into two RelativeHints:
+    one where the attributes are one floor apart in the positive direction (above),
+    and one where they are one floor apart in the negative direction (below).
     
+    It recursively checks both cases for validity.
+
+    Args:
+        hint (NeighborHint): The neighboring relationship to resolve.
+        hints (List[Hint]): Remaining hints to process.
+        assigment (Assigment): Current state of the tower.
+
     Returns:
-        int: Total valid configurations found.
+        int: The number of valid assignments considering this neighbor hint.
     """
-    possibilities = 0
+    return (
+        helper_relative_hint(
+            RelativeHint(hint._attr1, hint._attr2, 1),
+            hints[:],
+            deepcopy(assigment)
+        )
+        +
+        helper_relative_hint(
+            RelativeHint(hint._attr1, hint._attr2, -1),
+            hints[:],
+            deepcopy(assigment)
+        )
+    )
 
-    for floor in list(Floor)[:-1]:  # Floors 1 to 4 (excluding top floor)
-        above = floor_above(floor)
-        if not above:
-            continue
-
-        # case 1: attr1 on current floor, attr2 on floor above
-        hints_case_1 = hints.copy()
-        hints_case_1.append(AbsoluteHint(floor, hint._attr1))
-        hints_case_1.append(AbsoluteHint(above, hint._attr2))
-        possibilities += helper(hints_case_1, deepcopy(assigment))
-
-        # case 2: attr2 on current floor, attr1 on floor above
-        hints_case_2 = hints.copy()
-        hints_case_2.append(AbsoluteHint(floor, hint._attr2))
-        hints_case_2.append(AbsoluteHint(above, hint._attr1))
-        possibilities += helper(hints_case_2, deepcopy(assigment))
-
-    return possibilities    
-    
 def helper_relative_hint(
     hint: RelativeHint,
     hints: List[Hint],
