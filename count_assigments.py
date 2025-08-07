@@ -98,10 +98,12 @@ class NeighborHint(Hint):
         self._attr1 = attr1
         self._attr2 = attr2
 
+
 class Story(object):
     def __init__(self):
         self._color = Color.Empty
         self._animal = Animal.Empty
+
 
 class Assigment(object):
     """
@@ -132,16 +134,16 @@ class Assigment(object):
     def is_free_color(self, color: Color) -> bool:
         return color in self._free_colors
 
-    def is_valid_floor_animal_assigment(self,floor: Floor, animal: Animal) -> bool:
+    def is_valid_floor_animal_assigment(self, floor: Floor, animal: Animal) -> bool:
         return self.is_floor_animal_empty(floor) and self.is_free_animal(animal)
 
-    def is_valid_floor_color_assigment(self,floor: Floor, color: Color) -> bool:
+    def is_valid_floor_color_assigment(self, floor: Floor, color: Color) -> bool:
         return self.is_floor_color_empty(floor) and self.is_free_color(color)
         
-    def is_color_already_applied(self,floor: Floor, color: Color) -> bool:
+    def is_color_already_applied(self, floor: Floor, color: Color) -> bool:
         return self._tower[floor]._color == color
         
-    def is_animal_already_applied(self,floor: Floor, animal: Animal) -> bool:
+    def is_animal_already_applied(self, floor: Floor, animal: Animal) -> bool:
         return self._tower[floor]._animal == animal
         
     def apply_animal(self, floor: Floor, animal: Animal) -> None:
@@ -219,7 +221,7 @@ def helper_relative_hint(
 
     return possibilities
     
-def helper_absolue_no_floor_hint(hint: AbsoluteHint, hints: List[Hint], assigment: Assigment) -> int:
+def helper_absolute_no_floor_hint(hint: AbsoluteHint, hints: List[Hint], assigment: Assigment) -> int:
     """
     Handles AbsoluteHints where neither attr is a Floor (Animal-Color or Color-Animal).
     Tries placing both on each floor and recurses.
@@ -250,7 +252,7 @@ def apply_absolute_hint_if_valid(hint: AbsoluteHint, assigment: Assigment) -> bo
     if isinstance(hint._attr1, Floor):
         floor: Floor = hint._attr1
         if floor > Floor.Fifth or floor < Floor.First:
-            return False;
+            return False
         
         # hint of (Floor, Animal)
         if isinstance(hint._attr2, Animal):
@@ -271,7 +273,7 @@ def apply_absolute_hint_if_valid(hint: AbsoluteHint, assigment: Assigment) -> bo
     if isinstance(hint._attr2, Floor):
         floor: Floor = hint._attr2
         if floor > Floor.Fifth or floor < Floor.First:
-            return False;
+            return False
         
         # hint of (Animal, Floor)
         if isinstance(hint._attr1, Animal):
@@ -314,7 +316,7 @@ def helper(hints: List[Hint], assigment: Assigment) -> int:
             if apply_absolute_hint_if_valid(hint, assigment):
                 return helper(hints[1:], assigment)
             return 0
-        return helper_absolue_no_floor_hint(hint, hints[1:], assigment)
+        return helper_absolute_no_floor_hint(hint, hints[1:], assigment)
 
 def count_assignments(hints):
     """
